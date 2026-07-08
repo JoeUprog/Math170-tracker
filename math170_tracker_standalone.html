@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 170 Practicum Tracker</title>
+</head>
+<body style="margin:0;background:#12161d;">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  .m170-root {
+    --bg: #12161d;
+    --panel: #1b212c;
+    --panel-2: #1f2632;
+    --border: #262e3d;
+    --grid: #1d2431;
+    --text: #eaedf2;
+    --text-dim: #8892a0;
+    --text-faint: #5c6675;
+    --accent-activity: #4fd1c5;
+    --accent-homework: #7c93ff;
+    --accent-quiz: #e0304a;
+    --accent-final: #e8b34c;
+    --accent-done: #38d9a9;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', -apple-system, sans-serif;
+
+    background: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+    color: var(--text);
+    font-family: var(--font-body);
+    padding: 28px 20px 60px;
+    border-radius: 14px;
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.4;
+  }
+  .m170-root * { box-sizing: border-box; }
+
+  .m170-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+  }
+  .m170-eyebrow {
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-activity);
+    margin-bottom: 6px;
+  }
+  .m170-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .m170-sub {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin-top: 4px;
+  }
+  .m170-countdown {
+    font-family: var(--font-display);
+    text-align: right;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    min-width: 150px;
+  }
+  .m170-countdown .num {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--accent-final);
+    line-height: 1;
+  }
+  .m170-countdown .lbl {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .m170-refbar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .m170-refcard {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .m170-refcard .k {
+    font-family: var(--font-display);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 5px;
+  }
+  .m170-refcard .v {
+    font-size: 13px;
+    color: var(--text);
+  }
+  .m170-refcard .v a { color: var(--accent-activity); text-decoration: none; }
+  .m170-refcard .v a:hover { text-decoration: underline; }
+
+  .m170-progresswrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 26px;
+  }
+  .m170-progresstop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    font-family: var(--font-display);
+  }
+  .m170-progresstop .big { font-size: 15px; font-weight: 700; }
+  .m170-progresstop .small { font-size: 11px; color: var(--text-dim); }
+  .m170-bar {
+    height: 8px;
+    background: var(--grid);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .m170-barfill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-activity), var(--accent-done));
+    border-radius: 5px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .m170-week {
+    margin-bottom: 30px;
+  }
+  .m170-weekhead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .m170-weektitle {
+    font-size: 15.5px;
+    font-weight: 700;
+  }
+  .m170-weekrange {
+    font-family: var(--font-display);
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .m170-day {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .m170-day:last-child { border-bottom: none; }
+  .m170-day.is-today { background: rgba(79,209,197,0.06); border-radius: 10px; padding: 12px 10px; margin: 0 -10px; }
+  .m170-daybadge {
+    font-family: var(--font-display);
+    text-align: center;
+    padding-top: 2px;
+  }
+  .m170-daybadge .wd {
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .m170-daybadge .dd {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .m170-day.is-today .m170-daybadge .dd { color: var(--accent-activity); }
+  .m170-todaytag {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    color: var(--bg);
+    background: var(--accent-activity);
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-top: 3px;
+  }
+
+  .m170-topic {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .m170-note {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-style: italic;
+    padding: 6px 0;
+  }
+
+  .m170-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+  }
+  .m170-item input[type="checkbox"] {
+    margin-top: 2px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent-done);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .m170-item label { flex: 1; cursor: pointer; }
+  .m170-item .lbl-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .m170-item .lbl-text {
+    font-size: 13px;
+    color: var(--text);
+  }
+  .m170-item .pts {
+    font-family: var(--font-display);
+    font-size: 11px;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+  .m170-item .due {
+    font-family: var(--font-display);
+    font-size: 10.5px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .m170-item.checked .lbl-text { color: var(--text-faint); text-decoration: line-through; }
+  .m170-item.checked { border-color: var(--accent-done); }
+
+  .m170-item.type-homework { border-left: 3px solid var(--accent-homework); }
+  .m170-item.type-activity { border-left: 3px solid var(--accent-activity); }
+
+  .m170-item.type-quiz {
+    border: 1px solid var(--accent-quiz);
+    background: rgba(224,48,74,0.08);
+    border-left: 3px solid var(--accent-quiz);
+  }
+  .m170-item.type-quiz .lbl-text { font-weight: 700; }
+  .m170-quiztag {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    background: var(--accent-quiz);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+  }
+  .m170-item.type-quiz .due { color: var(--accent-quiz); font-weight: 600; }
+
+  .m170-item.type-final {
+    border: 1px solid var(--accent-final);
+    background: rgba(232,179,76,0.08);
+    border-left: 3px solid var(--accent-final);
+  }
+  .m170-item.type-final .lbl-text { font-weight: 800; font-size: 14px; }
+  .m170-item.type-final .due { color: var(--accent-final); font-weight: 600; }
+
+  .m170-item.type-event { border-left: 3px solid var(--text-faint); }
+
+  .m170-warn {
+    font-size: 11px;
+    color: var(--accent-quiz);
+    margin-top: 4px;
+  }
+
+  .m170-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11.5px;
+    color: var(--text-faint);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .m170-resetbtn {
+    font-family: var(--font-display);
+    font-size: 10.5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .m170-resetbtn:hover { border-color: var(--accent-quiz); color: var(--accent-quiz); }
+
+  @media (max-width: 480px) {
+    .m170-day { grid-template-columns: 48px 1fr; }
+    .m170-title { font-size: 19px; }
+  }
+</style>
+
+<div class="m170-root" id="m170-root">
+  <div class="m170-header">
+    <div>
+      <div class="m170-eyebrow">01:090:170:NE — Summer 2026</div>
+      <div class="m170-title">Math 170 Practicum Tracker</div>
+      <div class="m170-sub">M–F 8:00–9:30 AM · ABW 2100 · Gabriela Sprague</div>
+    </div>
+    <div class="m170-countdown">
+      <div class="num" id="m170-countdown-num">—</div>
+      <div class="lbl">days to Final Exam</div>
+    </div>
+  </div>
+
+  <div class="m170-refbar">
+    <div class="m170-refcard">
+      <div class="k">Instructor</div>
+      <div class="v">Gabriela Sprague<br><a href="mailto:gabriela.sprague@rutgers.edu">gabriela.sprague@rutgers.edu</a></div>
+    </div>
+    <div class="m170-refcard">
+      <div class="k">Office Hours</div>
+      <div class="v">M–F 9:30–10:00 AM<br>& 11:30 AM–12:00 PM</div>
+    </div>
+    <div class="m170-refcard">
+      <div class="k">Math Coach — Derek Chen</div>
+      <div class="v">Zoom Mon/Tue/Thu 6–7 PM<br>ID 696 418 5166 · Pass 825731</div>
+    </div>
+    <div class="m170-refcard">
+      <div class="k">Zero-Tolerance Rules</div>
+      <div class="v">No late work, ever. No quiz makeups w/o documented emergency. Below 50% on Final = fail course, regardless of other grades.</div>
+    </div>
+  </div>
+
+  <div class="m170-progresswrap">
+    <div class="m170-progresstop">
+      <span class="big" id="m170-progress-frac">0 / 0 done</span>
+      <span class="small" id="m170-progress-pts">0 / 0 pts checked off</span>
+    </div>
+    <div class="m170-bar"><div class="m170-barfill" id="m170-barfill"></div></div>
+  </div>
+
+  <div id="m170-weeks"></div>
+
+  <div class="m170-footer">
+    <span>Grading: HW 20% · Quizzes 20% · Class Activities 15% · Attendance 5% · Final 40%</span>
+    <button class="m170-resetbtn" id="m170-reset">Reset checklist</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const WEEKS = [
+    {
+      title: "Getting Started",
+      range: "Jul 6 – 12",
+      days: [
+        { date: "2026-07-07", wd: "Tue", topic: "Kickoff", items: [
+          { id:"zoom-intro", type:"event", label:"Zoom: Intro meeting w/ instructor — cam & mic required", due:"8:00 AM" },
+          { id:"coach-welcome", type:"event", label:"Welcome meeting with Math Coach" }
+        ]},
+        { date: "2026-07-11", wd: "Sat", topic: "Getting Started deadlines", items: [
+          { id:"gs-discussion", type:"activity", label:"Discussion: Getting Started Introductions", points:2, due:"11:59 PM" },
+          { id:"gs-quiz", type:"activity", label:"Quiz: Course Requirements Acknowledgment", points:4, due:"11:59 PM" }
+        ]}
+      ]
+    },
+    {
+      title: "Week 2 · Chapter 1 — PreCalculus Review",
+      range: "Jul 13 – 18",
+      days: [
+        { date:"2026-07-13", wd:"Mon", topic:"1.1 Review of Functions · 1.2 Representing Functions", items:[
+          { id:"ca1", type:"activity", label:"Class Activity 1", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-14", wd:"Tue", topic:"1.3 Inverse Functions (Part 1)", items:[
+          { id:"ca2", type:"activity", label:"Class Activity 2", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-15", wd:"Wed", topic:"1.3 Exponential & Logarithmic Functions (Part 2)", items:[
+          { id:"ca3", type:"activity", label:"Class Activity 3", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-16", wd:"Thu", topic:"1.4 Trigonometric Functions (Part 1)", items:[
+          { id:"ca4", type:"activity", label:"Class Activity 4", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-17", wd:"Fri", topic:"1.4 Inverse Trigonometric Functions (Part 2)", items:[
+          { id:"ca5", type:"activity", label:"Class Activity 5", points:10, due:"11:59 PM" },
+          { id:"quiz1", type:"quiz", label:"Quiz 1 — Chapter 1", points:10, due:"9:10 – 10:00 AM", tag:"NO MAKEUP" }
+        ]},
+        { date:"2026-07-18", wd:"Sat", topic:"Chapter 1 homework — all due tonight", items:[
+          { id:"hw-1-1", type:"homework", label:"HW 1.1 Review of Functions", points:7, due:"11:59 PM" },
+          { id:"hw-1-2", type:"homework", label:"HW 1.2 Representing Functions", points:9, due:"11:59 PM" },
+          { id:"hw-1-3", type:"homework", label:"HW 1.3 Inverse Functions", points:11, due:"11:59 PM" },
+          { id:"hw-1-4a", type:"homework", label:"HW 1.4 Trigonometric Functions", points:12, due:"11:59 PM" },
+          { id:"hw-1-4b", type:"homework", label:"HW 1.4 Inverse Trigonometric Functions", points:11, due:"11:59 PM" }
+        ]}
+      ]
+    },
+    {
+      title: "Week 3 · Chapter 2 — Limits",
+      range: "Jul 20 – 25",
+      days: [
+        { date:"2026-07-20", wd:"Mon", topic:"2.1 The Idea of Limits · 2.2 Definitions of Limits", items:[
+          { id:"ca6", type:"activity", label:"Class Activity 6", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-21", wd:"Tue", topic:"2.3 Techniques for Computing Limits", items:[
+          { id:"ca7", type:"activity", label:"Class Activity 7", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-22", wd:"Wed", topic:"2.4 Infinite Limits · 2.5 Limits at Infinity", items:[
+          { id:"ca8", type:"activity", label:"Class Activity 8", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-23", wd:"Thu", topic:"2.6 Continuity — Day 1", items:[
+          { id:"ca9", type:"activity", label:"Class Activity 9", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-24", wd:"Fri", topic:"2.6 Continuity — Day 2", items:[
+          { id:"ca10", type:"activity", label:"Class Activity 10", points:10, due:"11:59 PM" },
+          { id:"quiz2", type:"quiz", label:"Quiz 2 — Chapter 2", points:10, due:"9:10 – 9:30 AM", tag:"NO MAKEUP · 20 MIN WINDOW" }
+        ]},
+        { date:"2026-07-25", wd:"Sat", topic:"Chapter 2 homework — all due tonight", items:[
+          { id:"hw-2-12", type:"homework", label:"HW 2.1/2.2 Introduction to Limits", points:42, due:"11:59 PM" },
+          { id:"hw-2-3", type:"homework", label:"HW 2.3 Techniques for Computing Limits", points:42, due:"11:59 PM" },
+          { id:"hw-2-4", type:"homework", label:"HW 2.4 Infinite Limits", points:42, due:"11:59 PM" },
+          { id:"hw-2-5", type:"homework", label:"HW 2.5 Limits at Infinity", points:42, due:"11:59 PM" },
+          { id:"hw-2-6", type:"homework", label:"HW 2.6 Continuity", points:42, due:"11:59 PM" }
+        ]}
+      ]
+    },
+    {
+      title: "Week 4 · Chapter 3 — Derivatives",
+      range: "Jul 27 – 31",
+      days: [
+        { date:"2026-07-27", wd:"Mon", topic:"3.1 Introduction to Derivatives · 3.2 Tangent Lines", items:[
+          { id:"ca11", type:"activity", label:"Class Activity 11", points:10, due:"12:59 PM", warn:"Due 12:59 PM — NOT 11:59 PM, only ~5 hrs after class starts. Double-check with instructor if unsure." }
+        ]},
+        { date:"2026-07-28", wd:"Tue", topic:"3.3–3.5 Differentiation Rules (Power, Product, Quotient, Trig)", items:[
+          { id:"ca12", type:"activity", label:"Class Activity 12", points:10, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-29", wd:"Wed", topic:"3.7 The Chain Rule", items:[], note:"No separate Class Activity is listed in Canvas for this day — confirm in class in case one gets posted." },
+        { date:"2026-07-30", wd:"Thu", topic:"Review / Catch-up", items:[
+          { id:"ca13", type:"activity", label:"Class Activity 13", points:10, due:"12:59 PM", warn:"Due 12:59 PM — NOT 11:59 PM." },
+          { id:"quiz3", type:"quiz", label:"Quiz 3 — Chapter 3", points:10, due:"9:10 – 9:50 AM", tag:"NO MAKEUP" },
+          { id:"hw-3-12", type:"homework", label:"HW 3.1/3.2 Introduction to Derivatives", points:42, due:"11:59 PM" },
+          { id:"hw-3-34", type:"homework", label:"HW 3.3/3.4 Power, Exponential, Product & Quotient Rules", points:42, due:"11:59 PM" },
+          { id:"hw-3-5", type:"homework", label:"HW 3.5 Trigonometric Derivatives", points:24, due:"11:59 PM" },
+          { id:"hw-3-7", type:"homework", label:"HW 3.7 Chain Rule", points:42, due:"11:59 PM" }
+        ]},
+        { date:"2026-07-31", wd:"Fri", topic:"FINAL EXAM — Cumulative", items:[
+          { id:"final", type:"final", label:"Final Exam — open-ended, partial credit, NO calculators", points:100, due:"8:00 – 10:59 AM" }
+        ]}
+      ]
+    }
+  ];
+
+  const STORAGE_KEY = "math170-checklist-state";
+  let state = {};
+
+  function todayStr(){
+    const d = new Date();
+    const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+    return y + "-" + m + "-" + day;
+  }
+
+  function render(){
+    const root = document.getElementById("m170-weeks");
+    root.innerHTML = "";
+    const today = todayStr();
+
+    let totalItems = 0, doneItems = 0, totalPts = 0, donePts = 0;
+
+    WEEKS.forEach(week => {
+      const weekEl = document.createElement("div");
+      weekEl.className = "m170-week";
+      weekEl.innerHTML = '<div class="m170-weekhead"><span class="m170-weektitle">' + week.title + '</span><span class="m170-weekrange">' + week.range + '</span></div>';
+
+      week.days.forEach(day => {
+        const isToday = day.date === today;
+        const dayEl = document.createElement("div");
+        dayEl.className = "m170-day" + (isToday ? " is-today" : "");
+
+        const dObj = new Date(day.date + "T00:00:00");
+        const dayNum = dObj.getDate();
+
+        let badgeHtml = '<div class="m170-daybadge"><div class="wd">' + day.wd + '</div><div class="dd">' + dayNum + '</div>';
+        if (isToday) badgeHtml += '<div class="m170-todaytag">TODAY</div>';
+        badgeHtml += '</div>';
+
+        let bodyHtml = '<div><div class="m170-topic">' + day.topic + '</div>';
+        if (day.note) bodyHtml += '<div class="m170-note">' + day.note + '</div>';
+
+        (day.items || []).forEach(item => {
+          totalItems++;
+          if (item.points) totalPts += item.points;
+          const checked = !!state[item.id];
+          if (checked) { doneItems++; if (item.points) donePts += item.points; }
+
+          bodyHtml += '<div class="m170-item type-' + item.type + (checked ? " checked" : "") + '">';
+          bodyHtml += '<input type="checkbox" id="chk-' + item.id + '" data-id="' + item.id + '" ' + (checked ? "checked" : "") + '>';
+          bodyHtml += '<label for="chk-' + item.id + '"><div class="lbl-row"><span class="lbl-text">' + item.label + (item.tag ? '<span class="m170-quiztag">' + item.tag + '</span>' : '') + '</span>';
+          if (item.points) bodyHtml += '<span class="pts">' + item.points + ' pts</span>';
+          bodyHtml += '</div>';
+          if (item.due) bodyHtml += '<div class="due">Due ' + item.due + '</div>';
+          if (item.warn) bodyHtml += '<div class="m170-warn">⚠ ' + item.warn + '</div>';
+          bodyHtml += '</label></div>';
+        });
+
+        bodyHtml += '</div>';
+        dayEl.innerHTML = badgeHtml + bodyHtml;
+        weekEl.appendChild(dayEl);
+      });
+
+      root.appendChild(weekEl);
+    });
+
+    document.getElementById("m170-progress-frac").textContent = doneItems + " / " + totalItems + " done";
+    document.getElementById("m170-progress-pts").textContent = donePts + " / " + totalPts + " pts checked off";
+    document.getElementById("m170-barfill").style.width = (totalItems ? (doneItems/totalItems*100) : 0) + "%";
+
+    const finalDate = new Date("2026-07-31T00:00:00");
+    const now = new Date();
+    now.setHours(0,0,0,0);
+    const diffDays = Math.round((finalDate - now) / 86400000);
+    document.getElementById("m170-countdown-num").textContent = diffDays >= 0 ? diffDays : "done";
+
+    root.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener("change", (e) => {
+        const id = e.target.getAttribute("data-id");
+        state[id] = e.target.checked;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(err) { console.error("save failed", err); }
+        render();
+      });
+    });
+  }
+
+  function init(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) state = JSON.parse(raw);
+    } catch(err) {
+      state = {};
+    }
+    render();
+
+    document.getElementById("m170-reset").addEventListener("click", () => {
+      state = {};
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(err) {}
+      render();
+    });
+
+    const todayEl = document.querySelector(".m170-day.is-today");
+    if (todayEl) todayEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  init();
+})();
+</script>
+
+</body>
+</html>
